@@ -14,6 +14,7 @@ func main() {
 	days := []func() (string, string){
 		day1,
 		day2,
+		day3,
 	}
 
 	if args := os.Args[1:]; len(args) > 0 {
