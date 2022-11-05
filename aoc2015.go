@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+	"time"
 )
 
 func print_day(day int, part1 string, part2 string) {
@@ -18,7 +19,10 @@ func main() {
 		day4,
 		day5,
 		day6,
+		day7,
 	}
+
+	start := time.Now()
 
 	if args := os.Args[1:]; len(args) > 0 {
 		for _, arg := range args {
@@ -41,4 +45,7 @@ func main() {
 			print_day(i+1, pt1, pt2)
 		}
 	}
+
+	elapsed := time.Since(start)
+	fmt.Printf("finished in %v seconds\n", elapsed.Seconds())
 }
