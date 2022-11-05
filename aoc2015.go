@@ -17,6 +17,7 @@ func main() {
 		day3,
 		day4,
 		day5,
+		day6,
 	}
 
 	if args := os.Args[1:]; len(args) > 0 {
