@@ -68,7 +68,6 @@ func day8_count_string_memory(str string) (visualLength, memoryLength, encodedLe
 			}
 			encodedLength += 2
 			memoryLength++
-			break
 		default:
 			encodedLength++
 			memoryLength++
