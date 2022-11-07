@@ -196,27 +196,6 @@ func evaluate(variable string, variablesMap map[string]Expression, evaluationCac
 	return returnValue
 }
 
-func day7_part1() uint16 {
-	file, err := os.Open("input/day7.txt")
-	if err != nil {
-		panic(err)
-	}
-	defer file.Close()
-
-	scanner := bufio.NewScanner(file)
-	scanner.Split(bufio.ScanLines)
-
-	variables := make(map[string]Expression)
-	evaluationCache := make(map[string]uint16)
-
-	for scanner.Scan() {
-		line := scanner.Text()
-		parse_line(line, variables)
-	}
-
-	return evaluate("a", variables, evaluationCache)
-}
-
 func day7() (string, string) {
 	file, err := os.Open("input/day7.txt")
 	if err != nil {
