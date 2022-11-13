@@ -47,10 +47,8 @@ func main() {
 			}
 		}
 	} else {
-		for i, day := range days {
-			pt1, pt2 := day()
-			print_day(i+1, pt1, pt2)
-		}
+		pt1, pt2 := days[len(days)-1]()
+		print_day(len(days), pt1, pt2)
 	}
 
 	elapsed := time.Since(start)
