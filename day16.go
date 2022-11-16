@@ -73,38 +73,29 @@ func day16_parse_line(line string) []int {
 		data[i] = -1 //sentinel value
 	}
 
-	for i := 0; i < len(split); i++ {
+	//skip first 2 entries 'Sue' '123:'
+	for i := 2; i < len(split); i += 2 {
 		switch split[i] {
 		case "children:":
-			i++
-			data[MFCSAM_CHILDREN], _ = strconv.Atoi(split[i])
+			data[MFCSAM_CHILDREN], _ = strconv.Atoi(split[i+1])
 		case "cats:":
-			i++
-			data[MFCSAM_CATS], _ = strconv.Atoi(split[i])
+			data[MFCSAM_CATS], _ = strconv.Atoi(split[i+1])
 		case "samoyeds:":
-			i++
-			data[MFCSAM_SAMOYEDS], _ = strconv.Atoi(split[i])
+			data[MFCSAM_SAMOYEDS], _ = strconv.Atoi(split[i+1])
 		case "pomeranians:":
-			i++
-			data[MFCSAM_POMERANIANS], _ = strconv.Atoi(split[i])
+			data[MFCSAM_POMERANIANS], _ = strconv.Atoi(split[i+1])
 		case "akitas:":
-			i++
-			data[MFCSAM_AKITAS], _ = strconv.Atoi(split[i])
+			data[MFCSAM_AKITAS], _ = strconv.Atoi(split[i+1])
 		case "vizslas:":
-			i++
-			data[MFCSAM_VIZLAS], _ = strconv.Atoi(split[i])
+			data[MFCSAM_VIZLAS], _ = strconv.Atoi(split[i+1])
 		case "goldfish:":
-			i++
-			data[MFCSAM_GOLDFISH], _ = strconv.Atoi(split[i])
+			data[MFCSAM_GOLDFISH], _ = strconv.Atoi(split[i+1])
 		case "trees:":
-			i++
-			data[MFCSAM_TREES], _ = strconv.Atoi(split[i])
+			data[MFCSAM_TREES], _ = strconv.Atoi(split[i+1])
 		case "cars:":
-			i++
-			data[MFCSAM_CARS], _ = strconv.Atoi(split[i])
+			data[MFCSAM_CARS], _ = strconv.Atoi(split[i+1])
 		case "perfumes:":
-			i++
-			data[MFCSAM_PERFUMES], _ = strconv.Atoi(split[i])
+			data[MFCSAM_PERFUMES], _ = strconv.Atoi(split[i+1])
 		}
 	}
 
