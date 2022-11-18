@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"regexp"
+	"sort"
 	"strings"
 )
 
@@ -81,72 +82,69 @@ func day19() (string, string) {
 	scanner := bufio.NewScanner(file)
 	scanner.Split(bufio.ScanLines)
 
-	input := ""
+	molecule := ""
+	rules := make([]Day19Rule, 0, 50)
 
-	rules := make([]Day19Rule, 0, 30)
-
+	//read file line by line
 	for scanner.Scan() {
 		line := scanner.Text()
 		splits := strings.Split(line, " => ")
-		if len(splits) == 2 {
+		if len(splits) == 2 { //rules "search => replace"
 			rules = append(rules, Day19Rule{search: splits[0], replacement: splits[1]})
 		} else if len(line) > 0 {
-			input = line
+			molecule = line
+		}
+	}
+	//sort rules in ascending replacement length order (for part 2)
+	sort.Slice(rules, func(i, j int) bool {
+		return len(rules[i].replacement) > len(rules[j].replacement)
+	})
+
+	//precompile regexes
+	searchRegexes := make([]*regexp.Regexp, len(rules))
+	replaceRegexes := make([]*regexp.Regexp, len(rules))
+	for i, r := range rules {
+		searchRegexes[i] = regexp.MustCompile(r.search)
+		replaceRegexes[i] = regexp.MustCompile(r.replacement)
+	}
+
+	//part 1
+	set := make(map[string]bool)
+	copy := molecule
+	for i, r := range rules {
+		for _, i := range searchRegexes[i].FindAllStringIndex(copy, -1) {
+			copy := copy[:i[0]] + r.replacement + copy[i[1]:]
+			if _, ok := set[copy]; !ok {
+				set[copy] = true
+			}
 		}
 	}
 
-	moleculeSet := make(map[string]bool)
-	for _, r := range rules {
-		expr := regexp.MustCompile(r.search)
-		matches := expr.FindAllStringIndex(input, -1)
-
-		for _, i := range matches {
-			inputCopy := input[:i[0]] + r.replacement + input[i[1]:]
-			if _, ok := moleculeSet[inputCopy]; !ok {
-				moleculeSet[inputCopy] = true
-			}
-		}
-	}
-
-	queue := make([]string, 0, 300)
-	queue = append(queue, "e")
-	depth := 0
-
-	for len(queue) > 0 {
-		nodes := len(queue)
-		finished := false
-		depth++
-
-		for i := 0; i < nodes; i++ {
-			n := queue[0]     //peek
-			queue = queue[1:] //pop
-
-			moleculeSet2 := make(map[string]bool)
-			for _, r := range rules {
-				expr := regexp.MustCompile(r.search)
-				matches := expr.FindAllStringIndex(n, -1)
-
-				for _, i := range matches {
-					inputCopy := n[:i[0]] + r.replacement + n[i[1]:]
-					if _, ok := moleculeSet[inputCopy]; !ok {
-						moleculeSet2[inputCopy] = true
-					}
+	//part 2
+	copy = molecule
+	steps := 0
+	for {
+		for i, r := range rules {
+			matches := replaceRegexes[i].FindAllStringIndex(copy, -1)
+			//replace matches starting from the last one
+			for j := len(matches) - 1; j >= 0; j-- {
+				if j < 0 {
+					break
 				}
+				copy = copy[:matches[j][0]] + r.search + copy[matches[j][1]:]
+				steps++
 			}
 
-			for k := range moleculeSet2 {
-				if len(k) < len(input) {
-					queue = append(queue, k) //push
-				} else if input == k {
-					finished = true
-				}
+			//if something was replaced make another step starting with the biggest rule again
+			if len(matches) > 0 {
+				break
 			}
 		}
 
-		if finished {
+		if len(copy) == 1 && copy[0] == 'e' {
 			break
 		}
 	}
 
-	return fmt.Sprint(len(moleculeSet)), fmt.Sprint(depth)
+	return fmt.Sprint(len(set)), fmt.Sprint(steps)
 }
