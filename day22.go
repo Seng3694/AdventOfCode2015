@@ -189,18 +189,18 @@ func day22_can_apply_spell(id int, player *Day22PlayerStats, boss *Day22BossStat
 		return true
 	case SPELL_DRAIN:
 		return true
-	case SPELL_SHIELD:
-		if player.shieldTimer > 0 {
+	case SPELL_SHIELD: //for timers -1 because there will be one more tick
+		if player.shieldTimer-1 > 0 {
 			return false
 		}
 		return true
 	case SPELL_POISON:
-		if boss.poisonTimer > 0 {
+		if boss.poisonTimer-1 > 0 {
 			return false
 		}
 		return true
 	case SPELL_RECHARGE:
-		if player.rechargeTimer > 0 {
+		if player.rechargeTimer-1 > 0 {
 			return false
 		}
 		return true
@@ -212,22 +212,16 @@ func day22_cast_spell(id int, player *Day22PlayerStats, boss *Day22BossStats) {
 	switch id {
 	case SPELL_MAGIC_MISSILE:
 		boss.hp -= spells[id].value
-		//fmt.Println("Player casts Magic Missile")
 	case SPELL_DRAIN: //not sure if there is maxhp. "heal" implies it
 		player.hp = day22_clamp(player.hp+spells[id].value, 0, player.maxHp)
-		//player.hp = player.hp + spells[id].value
 		boss.hp -= spells[id].value
-		//fmt.Println("Player casts Drain")
 	case SPELL_SHIELD:
 		player.shieldTimer = spells[id].timer
 		player.armor += spells[id].value
-		//fmt.Println("Player casts Shield")
 	case SPELL_POISON:
-		//fmt.Println("Player casts Poison")
 		boss.poisonTimer = spells[id].timer
 	case SPELL_RECHARGE:
 		player.rechargeTimer = spells[id].timer
-		//fmt.Println("Player casts Recharge")
 	}
 	player.mana -= spells[id].cost
 }
@@ -241,17 +235,13 @@ func day22_update_effects(player *Day22PlayerStats, boss *Day22BossStats) {
 		player.armor -= spells[SPELL_SHIELD].value
 		//set to -1 so it won't reduce armor next turn
 		player.shieldTimer = -1
-		//fmt.Println("Shield ran out")
 	}
 	if player.rechargeTimer > -1 {
 		player.mana += spells[SPELL_RECHARGE].value
-		//fmt.Printf("Recharged mana from %d to %d. Timer %d\n", player.mana-spells[SPELL_RECHARGE].value, player.mana, player.rechargeTimer)
 	}
 	if boss.poisonTimer > -1 {
 		boss.hp -= spells[SPELL_POISON].value
-		//fmt.Printf("Poison damage from %d to %d. Timer %d\n", boss.hp+spells[SPELL_POISON].value, boss.hp, boss.poisonTimer)
 	}
-
 }
 
 func day22_set_battle_state(player *Day22PlayerStats, boss *Day22BossStats, ignoreMana bool) int {
@@ -321,11 +311,6 @@ func day22_solution(isHardmode bool) int {
 		damage:      8,
 		poisonTimer: -1,
 	}
-	// bossStats := Day22BossStats{
-	// 	hp:          71,
-	// 	damage:      10,
-	// 	poisonTimer: -1,
-	// }
 
 	playerStats := Day22PlayerStats{
 		maxHp:         50,
