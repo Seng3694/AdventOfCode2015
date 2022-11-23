@@ -52,25 +52,17 @@ Santa looks nervous. Your puzzle input contains the message on the machine's con
 */
 
 func day25() (string, string) {
-	row := int64(2978) - 1
-	column := int64(3083) - 1
-	previous := int64(20151125)
-	code := int64(0)
+	row := 2978 - 1
+	column := 3083 - 1
+	diagonals := row + column
+	indices := ((diagonals*diagonals + diagonals) / 2) + column
+	previous := 20151125
+	code := 0
 
-	for diagonal := int64(1); ; diagonal++ {
-		for x := int64(0); x < diagonal+1; x++ {
-			y := diagonal - x
-			code = (previous * 252533) % 33554393
-			previous = code
-
-			if x == column && y == row {
-				fmt.Println(diagonal)
-				fmt.Println(row + column)
-				goto Exit
-			}
-		}
+	for i := 0; i < indices; i++ {
+		code = (previous * 252533) % 33554393
+		previous = code
 	}
 
-Exit:
 	return fmt.Sprint(code), ""
 }
