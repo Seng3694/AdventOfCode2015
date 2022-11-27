@@ -39,6 +39,6 @@ func day3_solution(santaCount int, data []byte) int {
 }
 
 func main() {
-	input := aocutil.FileReadAll[[]byte]("day3/input.txt")
+	input := aocutil.FileReadAll[[]byte]("day03/input.txt")
 	aocutil.AOCFinish(day3_solution(1, input), day3_solution(2, input))
 }

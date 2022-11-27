@@ -38,7 +38,7 @@ func main() {
 	memoryTotal := 0
 	encodedTotal := 0
 
-	aocutil.FileReadAllLines("day8/input.txt", func(s string) {
+	aocutil.FileReadAllLines("day08/input.txt", func(s string) {
 		visual, memory, encoded := day8_count_string_memory(s)
 		visualTotal += visual
 		memoryTotal += memory

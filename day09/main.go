@@ -94,7 +94,7 @@ func permutations(currentIndex int, smallestDistance *int, longestDistance *int,
 func main() {
 	locationMap := make(map[string]*Location)
 
-	aocutil.FileReadAllLines("day9/input.txt", func(s string) {
+	aocutil.FileReadAllLines("day09/input.txt", func(s string) {
 		parse_line(s, locationMap)
 	})
 

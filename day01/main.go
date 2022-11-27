@@ -34,6 +34,6 @@ func part2(input []byte) int {
 }
 
 func main() {
-	input := aocutil.FileReadAll[[]byte]("day1/input.txt")
+	input := aocutil.FileReadAll[[]byte]("day01/input.txt")
 	aocutil.AOCFinish(part1(input), part2(input))
 }

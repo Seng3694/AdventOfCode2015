@@ -46,7 +46,7 @@ func calculate_ribbon_length(dim Dimensions) int {
 func main() {
 	totalArea := 0
 	totalRibbonLength := 0
-	aocutil.FileReadAllLines("day2/input.txt", func(s string) {
+	aocutil.FileReadAllLines("day02/input.txt", func(s string) {
 		dim := parse_dimensions(s)
 		totalArea += calculate_total_area(dim)
 		totalRibbonLength += calculate_ribbon_length(dim)

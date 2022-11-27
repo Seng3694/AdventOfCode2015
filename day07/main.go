@@ -150,7 +150,7 @@ func evaluate(variable string, variablesMap map[string]Expression, evaluationCac
 func main() {
 	variables := make(map[string]Expression)
 
-	aocutil.FileReadAllLines("day7/input.txt", func(s string) {
+	aocutil.FileReadAllLines("day07/input.txt", func(s string) {
 		parse_line(s, variables)
 	})
 

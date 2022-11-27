@@ -55,7 +55,7 @@ func main() {
 	lightsPart1 := make([]int, width*height)
 	lightsPart2 := make([]int, width*height)
 
-	aocutil.FileReadAllLines("day6/input.txt", func(s string) {
+	aocutil.FileReadAllLines("day06/input.txt", func(s string) {
 		s = strings.Replace(s, "turn ", "", 1)
 		s = strings.Replace(s, "through ", "", 1)
 		tokens := strings.Split(s, " ")

@@ -63,7 +63,7 @@ func main() {
 	niceStringCount1 := 0
 	niceStringCount2 := 0
 
-	aocutil.FileReadAllLines("day5/input.txt", func(s string) {
+	aocutil.FileReadAllLines("day05/input.txt", func(s string) {
 		if is_nice_part1(s) {
 			niceStringCount1++
 		}

@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-	data := aocutil.FileReadAll[[]byte]("day4/input.txt")
+	data := aocutil.FileReadAll[[]byte]("day04/input.txt")
 
 	i := 0
 	part1Solution := 0
