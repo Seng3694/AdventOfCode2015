@@ -5,14 +5,27 @@ import (
 )
 
 func part1(input []byte) (floor int) {
-	for _, b := range input {
-		if b == '(' {
-			floor++
-		} else {
-			floor--
-		}
+	//divide work and assign each to a goroutine
+	const parts int = 4
+	part := len(input) / parts
+	channel := make(chan int, parts)
+	for i := 0; i < parts; i++ {
+		go func(from, to int, out chan int) {
+			f := 0
+			for i := from; i < to; i++ {
+				if input[i] == '(' {
+					f++
+				} else {
+					f--
+				}
+			}
+			out <- f
+		}(i*part, (i+1)*part, channel)
 	}
-	return floor
+	for i := 0; i < parts; i++ {
+		floor += <-channel
+	}
+	return
 }
 
 func part2(input []byte) int {
