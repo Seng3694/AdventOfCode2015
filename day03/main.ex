@@ -1,5 +1,5 @@
 defmodule Day03 do
-  def move(command, {x, y}) do
+  defp move({command, {x, y}}) do
     case command do
       "<" -> {x - 1, y + 0}
       ">" -> {x + 1, y + 0}
@@ -8,36 +8,22 @@ defmodule Day03 do
     end
   end
 
-  def deliver(houses, position) do
+  defp deliver(position, houses) do
     presents = Map.get(houses, position, 0) + 1
     Map.put(houses, position, presents)
   end
 
-  def solve_part1(input) do
+  def solve(input, count) do
     input
+    |> Enum.chunk_every(count)
     |> Enum.reduce(
-      {{0, 0}, %{{0, 0} => 1}},
-      fn cmd, {pos, houses} ->
-        pos = move(cmd, pos)
-        {pos, deliver(houses, pos)}
+      {List.duplicate({0, 0}, count), %{{0, 0} => count}},
+      fn commands, {positions, houses} ->
+        positions = Enum.zip(commands, positions) |> Enum.map(&move/1)
+        {positions, Enum.reduce(positions, houses, &deliver/2)}
       end
     )
     |> elem(1)
-    |> map_size
-  end
-
-  def solve_part2(input) do
-    input
-    |> Enum.chunk_every(2)
-    |> Enum.reduce(
-      {{0, 0}, {0, 0}, %{{0, 0} => 2}},
-      fn [cmd1, cmd2], {pos1, pos2, houses} ->
-        pos1 = move(cmd1, pos1)
-        pos2 = move(cmd2, pos2)
-        {pos1, pos2, houses |> deliver(pos1) |> deliver(pos2)}
-      end
-    )
-    |> elem(2)
     |> map_size
   end
 end
@@ -48,9 +34,9 @@ contents =
   |> String.graphemes()
 
 contents
-|> Day03.solve_part1()
+|> Day03.solve(1)
 |> IO.puts()
 
 contents
-|> Day03.solve_part2()
+|> Day03.solve(2)
 |> IO.puts()
