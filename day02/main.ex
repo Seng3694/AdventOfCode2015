@@ -1,4 +1,4 @@
-defmodule AdventOfCode do
+defmodule Day02 do
   def parse_dimensions(line) do
     line
     |> String.trim()
@@ -32,9 +32,9 @@ dimensions =
   |> Enum.map(&AdventOfCode.parse_dimensions/1)
 
 dimensions
-|> AdventOfCode.solve_part1()
+|> Day02.solve_part1()
 |> IO.puts()
 
 dimensions
-|> AdventOfCode.solve_part2()
+|> Day02.solve_part2()
 |> IO.puts()
