@@ -13,10 +13,11 @@ typedef aoc_point2_i32 point;
 #define AOC_BASE2_CAPACITY
 #include <aoc/set.h>
 
+static aoc_set_point visits = {0};
+
 static size_t solve(const char *const input, const size_t length,
                     const i32 santaCount) {
-  aoc_set_point visits = {0};
-  aoc_set_point_create(&visits, 1 << 14);
+  aoc_set_point_clear(&visits);
   aoc_set_point_insert(&visits, (point){0, 0});
   for (i32 s = 0; s < santaCount; ++s) {
     point p = {0, 0};
@@ -34,7 +35,6 @@ static size_t solve(const char *const input, const size_t length,
         aoc_set_point_insert_pre_hashed(&visits, p, hash);
     }
   }
-  aoc_set_point_destroy(&visits);
   return visits.count;
 }
 
@@ -42,6 +42,8 @@ int main(void) {
   char *input = NULL;
   size_t length = 0;
   aoc_file_read_all1("day03/input.txt", &input, &length);
+  aoc_set_point_create(&visits, 1 << 12);
   printf("%zu\n%zu\n", solve(input, length, 1), solve(input, length, 2));
+  aoc_set_point_destroy(&visits);
   aoc_free(input);
 }
