@@ -1,6 +1,9 @@
+#include <aoc/common.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <aoc/aoc.h>
+
+#define GOAL_TIME 2503
 
 typedef struct {
   u8 speed, duration, rest;
@@ -24,19 +27,52 @@ static void parse(char *line, aoc_vector_reindeer *const reindeers) {
   aoc_vector_reindeer_push(reindeers, r);
 }
 
+static inline u32 min(const u32 a, const u32 b) {
+  return AOC_MIN(a, b);
+}
+
+static inline u32 calculate_distance(const reindeer *const r, const u32 time) {
+  return (time / (r->duration + r->rest)) * r->speed * r->duration +
+         min(time % (r->duration + r->rest), r->duration) * r->speed;
+}
+
 static u32 solve_part1(const aoc_vector_reindeer *const reindeers) {
   u32 distance = 0;
   for (size_t i = 0; i < reindeers->length; ++i) {
     const reindeer *const r = &reindeers->items[i];
-    const u32 roundTime = (r->duration + r->rest);
-    const u32 rounds = 2503 / roundTime;
-    const u32 leftover = 2503 % roundTime;
-    const u32 dist = rounds * r->speed * r->duration +
-                     AOC_MIN(leftover, r->duration) * r->speed;
+    const u32 dist = calculate_distance(r, GOAL_TIME);
     if (dist > distance)
       distance = dist;
   }
   return distance;
+}
+
+static u32 solve_part2(const aoc_vector_reindeer *const r) {
+  u32 scores[r->length];
+  for (size_t i = 0; i < r->length; ++i)
+    scores[i] = 0;
+
+  size_t index = 0;
+  u32 furthest = 0;
+  for (u32 i = 1; i <= GOAL_TIME; ++i) {
+    furthest = 0;
+    for (size_t j = 0; j < r->length; ++j) {
+      const u32 dist = calculate_distance(&r->items[j], i);
+      if (dist > furthest) {
+        furthest = dist;
+        index = j;
+      }
+    }
+    scores[index]++;
+  }
+
+  u32 highestScore = 0;
+  for (size_t i = 0; i < r->length; ++i) {
+    if (scores[i] > highestScore)
+      highestScore = scores[i];
+  }
+
+  return highestScore;
 }
 
 int main(void) {
@@ -44,9 +80,7 @@ int main(void) {
   aoc_vector_reindeer_create(&reindeers, 1 << 4);
   aoc_file_read_lines1("day14/input.txt", (aoc_line_func)parse, &reindeers);
 
-  const u32 part1 = solve_part1(&reindeers);
-
-  printf("%u\n", part1);
+  printf("%u\n%u\n", solve_part1(&reindeers), solve_part2(&reindeers));
 
   aoc_vector_reindeer_destroy(&reindeers);
 }
