@@ -1,6 +1,4 @@
 #include <aoc/aoc.h>
-#include <bits/time.h>
-#include <complex.h>
 #include <stdio.h>
 #include <stdlib.h>
 
