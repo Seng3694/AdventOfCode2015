@@ -1,5 +1,5 @@
-#include <aoc/string.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <aoc/aoc.h>
 #include <aoc/mem.h>
@@ -44,6 +44,71 @@ static void parse(char *contents, aoc_vector_rule *const rules,
 
   input->str = contents + 1;
   input->len = strlen(input->str);
+}
+
+#define AOC_T char
+#include <aoc/vector.h>
+
+static inline u32 vec_char_hash(const aoc_vector_char *const vec) {
+  return aoc_string_hash1(vec->items, vec->length);
+}
+
+typedef struct {
+  const aoc_vector_char *vec;
+  i64 current;
+} vec_iter;
+
+static void back_iter_init(vec_iter *const iter,
+                           const aoc_vector_char *const v) {
+  iter->vec = v;
+  iter->current = v->length;
+}
+
+static bool find_next_index_back(vec_iter *const iter, const slice *const s,
+                                 size_t *const out) {
+  const i64 start = iter->current - (i64)s->len;
+  if (start < 0)
+    return false;
+
+  for (i64 i = start; i >= 0; --i) {
+    for (size_t j = 0; j < s->len; ++j) {
+      if (iter->vec->items[i + (i64)j] != s->str[j])
+        goto next;
+    }
+    *out = (size_t)i;
+    iter->current = i - 1;
+    return true;
+  next:;
+  }
+
+  return false;
+}
+
+static void vec_char_replace_at(aoc_vector_char *const vec,
+                                const slice *const search,
+                                const slice *const replace, const size_t i) {
+  const i64 diff = ((i64)replace->len - (i64)search->len);
+  const size_t newLength = vec->length + diff;
+  aoc_vector_char_ensure_capacity(vec, newLength);
+
+  if (diff > 0) {
+    for (i64 j = vec->length - 1; j > (i64)(i + (i64)search->len - 1); --j)
+      vec->items[j + diff] = vec->items[j];
+  } else if (diff < 0) {
+    for (i64 j = 0; j < (i64)vec->length - (i64)(i + search->len - 1); ++j)
+      vec->items[i + j + replace->len - 1] =
+          vec->items[i + j + search->len - 1];
+  }
+
+  for (size_t j = 0; j < replace->len; ++j)
+    vec->items[i + j] = replace->str[j];
+
+  vec->length = newLength;
+}
+
+static inline int compare_rule(const rule *const left,
+                               const rule *const right) {
+  return (int)((i64)right->replace.len - (i64)left->replace.len);
 }
 
 typedef struct {
@@ -146,16 +211,50 @@ static u32 solve_part1(const aoc_vector_rule *const rules,
   return (u32)slc.count;
 }
 
+static u32 solve_part2(const aoc_vector_rule *const rules,
+                       const slice *const input) {
+  aoc_vector_char chars = {0};
+  aoc_vector_char_create(&chars, 1 << 12);
+  aoc_mem_copy(chars.items, input->str, input->len);
+  chars.length = input->len;
+
+  u32 steps = 0;
+  for (;;) {
+    for (size_t i = 0; i < rules->length; ++i) {
+      const rule *const r = &rules->items[i];
+
+      vec_iter iter = {0};
+      back_iter_init(&iter, &chars);
+
+      size_t j = 0;
+      size_t matches = 0;
+      while (find_next_index_back(&iter, &r->replace, &j)) {
+        vec_char_replace_at(&chars, &r->replace, &r->search, j);
+        matches++;
+        steps++;
+      }
+
+      if (matches > 0)
+        break;
+    }
+
+    if (chars.length == 1 && chars.items[0] == 'e')
+      break;
+  }
+
+  aoc_vector_char_destroy(&chars);
+  return steps;
+}
+
 int main(void) {
   aoc_vector_rule rules = {0};
   aoc_vector_rule_create(&rules, 32);
   char *contents = aoc_file_read_all2("day19/input.txt");
   slice input = {.str = contents, .len = strlen(contents)};
   parse(contents, &rules, &input);
+  qsort(rules.items, rules.length, sizeof(rule), (__compar_fn_t)compare_rule);
 
-  const u32 part1 = solve_part1(&rules, &input);
-
-  printf("%u\n", part1);
+  printf("%u\n%u\n", solve_part1(&rules, &input), solve_part2(&rules, &input));
 
   aoc_vector_rule_destroy(&rules);
   aoc_free(contents);
